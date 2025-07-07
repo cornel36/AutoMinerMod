@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "autominermod",
+	"version": "1.0.10",
+	"name": "AutoMinerMod",
+	"description": "Automatically mines a selected 3D area layer by layer.",
+	"authors": [
+		"cornel36"
+	],
+	"contact": {
+		"homepage": "https://github.com/cornel36/AutoMinerMod",
+		"sources": "https://github.com/cornel36/AutoMinerMod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/autominermod/icon.png",
+	"environment": "*",
+
+	"entrypoints": {
+		"client": [
+			"net.cornel36.autominermod.AutoMinerMod"
+		]
+	},
+
+	"mixins": [
+		"autominermod.mixins.json"
+	],
+
+	"depends": {
+		"fabricloader": ">=0.16.14",
+		"minecraft": "~1.21.4",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+
+	"suggests": {
+		"modmenu": "*"
+	}
+}

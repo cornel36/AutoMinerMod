@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "net.cornel36.autominermod.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MixinClientPlayerEntity"
+  ],
+  "client": [
+    "MixinClientPlayerEntity"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
