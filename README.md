@@ -6,6 +6,8 @@
 
 **AutoMinerMod** is a Fabric mod for Minecraft that automatically mines a selected 3D area, layer by layer from top to bottom. Once the area is defined, the mod handles navigation, block targeting, breaking, and tool switching autonomously.
 
+**This is an early release!** I'm actively working on fixing common issues and improving the mod.  
+Feedback, suggestions, or bug reports are very welcome!
 ## Features
 
 - Automatically mines all blocks in a selected cuboid area
