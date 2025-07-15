@@ -1,6 +1,6 @@
 # AutoMinerMod
 
-![Minecraft Version](https://img.shields.io/badge/minecraft-1.21.4-blue.svg)
+![Minecraft Version](https://img.shields.io/badge/minecraft-1.21.7-blue.svg)
 ![Mod Loader](https://img.shields.io/badge/loader-Fabric-green.svg)
 ![License](https://img.shields.io/badge/license-CC0--1.0-lightgrey.svg)
 
@@ -10,19 +10,22 @@
 Feedback, suggestions, or bug reports are very welcome!
 ## Features
 
-- Automatically mines all blocks in a selected cuboid area
-- Starts from the top layer and goes downward
+- Multiple mining modes:
+    - **Area Mining** - Mines all blocks in a selected cuboid area, top to bottom
+    - **Straight Mining** - Mines in a straight line, useful for cobblestone generators or tunnels
+    - **Mob Grinder Mode** - Automatically kills mobs near mob grinders or XP farms
+- Dynamically selects the most effective tool for mining
+- Walks the player automatically to blocks or mobs
 - Avoids air and bedrock blocks
-- Dynamically selects the most effective tool
-- Walks the player to adjacent blocks for mining
-- Prevents falling by placing solid blocks when needed
-- Displays mining progress and estimated time left on HUD
+- Prevents falling by placing solid blocks if needed
+- Displays mining/mob-killing progress and status on HUD
+- Configurable mode selection via in-game settings screen
 
 ## Requirements
 
-- Minecraft `1.21.4`
+- Minecraft `1.21.7`
 - Fabric Loader `>= 0.16.14`
-- Fabric API
+- Fabric API `>= 0.129.0+1.21.7`
 - Java `21`
 
 ## Installation
