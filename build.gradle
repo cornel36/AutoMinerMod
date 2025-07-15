@@ -11,8 +11,10 @@ base {
 }
 
 repositories {
-	maven { url 'https://maven.pkg.github.com/cabaletta/baritone' }
+	maven { url = "https://maven.fabricmc.net/" }
+	mavenCentral()
 }
+
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"

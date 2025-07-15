@@ -1,8 +1,11 @@
 package net.cornel36.autominermod.visual;
 
+import net.cornel36.autominermod.AutoMinerMod;
 import net.cornel36.autominermod.AutoMinerTask;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 
@@ -14,56 +17,48 @@ public class AutoMinerHUDOverlay {
 
     /**
      * Renders HUD elements for the AutoMiner task.
-     * Shows active status in the top-right corner and debug info in the bottom-left.
+     * Shows active status in the top-left corner and debug info below it.
      *
-     * @param drawContext The current draw context for rendering text
-     * @param task        The active AutoMiner task instance
+     * @param context The current draw context for rendering text
      */
-    public static void render(DrawContext drawContext, AutoMinerTask task) {
+    public static void render(DrawContext context, RenderTickCounter tickDelta) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null || client.world == null) return;
 
+        AutoMinerTask task = AutoMinerMod.autoMinerTask;
+        if (task == null || !task.isRunning()) return;
+
         int screenWidth = client.getWindow().getScaledWidth();
-        int screenHeight = client.getWindow().getScaledHeight();
+        int x;
+        int y = 10;
+        int lineHeight = 12;
 
-        // ── Top-right corner: "AutoMiner Active" status ──
-        if (task != null && task.isRunning()) {
-            String activeText = "AutoMiner Active";
-            int textWidth = client.textRenderer.getWidth(activeText);
-            int padding = 10;
+        // Show status text
+        String statusText = "AutoMiner Active";
+        x = screenWidth - 10 - client.textRenderer.getWidth(statusText);
+        context.drawText(client.textRenderer, statusText, x, y, 0xFF00FF00, true);
+        y += lineHeight;
 
-            drawContext.drawText(
-                client.textRenderer,
-                activeText,
-                screenWidth - textWidth - padding,
-                padding,
-                0x00FF00, // Green text color
-                true
-            );
-        }
+        // Show layers left to dig
+        int layersLeft = task.getCurrentY() - task.getMinY() + 1;
+        String layersText = "Layers left: " + layersLeft;
+        x = screenWidth - 10 - client.textRenderer.getWidth(layersText);
+        context.drawText(client.textRenderer, layersText, x, y, 0xFFFFFFFF, true);
+        y += lineHeight;
 
-        // ── Bottom-left corner: debug lines ──
-        if (task != null && task.isRunning()) {
-            List<String> lines = task.getDebugText();
+        // show how many blocks are left to mine
+        int remainingBlocks = task.getRemainingBlocks();
+        int totalBlocks = task.getTotalBlockCount();
+        String blocksText = "Blocks left: " + remainingBlocks + " / " + totalBlocks;
+        x = screenWidth - 10 - client.textRenderer.getWidth(blocksText);
+        context.drawText(client.textRenderer, blocksText, x, y, 0xFFFFFFFF, true);
+        y += lineHeight;
 
-            int x = 10;
-            int yOffsetFromBottom = 30;  // Space from bottom of screen
-            int lineHeight = 10;
-
-            int totalHeight = lines.size() * lineHeight;
-            int y = screenHeight - totalHeight - yOffsetFromBottom;
-
-            for (String line : lines) {
-                drawContext.drawText(
-                    client.textRenderer,
-                    line,
-                    x,
-                    y,
-                    0xFFFFFF, // White text color
-                    true
-                );
-                y += lineHeight;
-            }
-        }
+        // current target
+        BlockPos target = task.getCurrentTarget();
+        String targetText = "Target: " + (target != null ? target.toShortString() : "None");
+        x = screenWidth - 10 - client.textRenderer.getWidth(targetText);
+        context.drawText(client.textRenderer, targetText, x, y, 0xFFFFFFFF, true);
     }
+
 }

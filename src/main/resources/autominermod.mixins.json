@@ -6,7 +6,8 @@
     "MixinClientPlayerEntity"
   ],
   "client": [
-    "MixinClientPlayerEntity"
+    "MixinClientPlayerEntity",
+    "MixinScreenAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

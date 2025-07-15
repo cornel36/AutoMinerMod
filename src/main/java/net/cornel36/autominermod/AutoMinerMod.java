@@ -1,18 +1,24 @@
 package net.cornel36.autominermod;
 
+import net.cornel36.autominermod.menus.AutoMinerSettings;
+import net.cornel36.autominermod.menus.AutoMinerSettingsScreen;
+import net.cornel36.autominermod.mixin.MixinScreenAccessor;
 import net.cornel36.autominermod.visual.AutoMinerHUDOverlay;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.glfw.GLFW;
-
 import net.cornel36.autominermod.selection.AreaSelector;
+import net.minecraft.client.gui.screen.option.OptionsScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 
 /**
  * Main mod class for AutoMinerMod.
@@ -21,6 +27,7 @@ import net.cornel36.autominermod.selection.AreaSelector;
  */
 public class AutoMinerMod implements ClientModInitializer {
 
+	private static final Identifier HUD_LAYER = Identifier.of("autominermod", "auto_miner_hud");
 	private static KeyBinding toggleKey;
 	public static AutoMinerTask autoMinerTask;
 	private static boolean wasPressed = false;
@@ -33,7 +40,7 @@ public class AutoMinerMod implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		// Register toggle keybinding (default key: K)
-		toggleKey = new KeyBinding("key.autominermod.toggle", // Localization key
+		toggleKey = new KeyBinding("key.autominermod.toggle",
 				InputUtil.Type.KEYSYM,
 				GLFW.GLFW_KEY_K,
 				"key.categories.misc");
@@ -59,6 +66,8 @@ public class AutoMinerMod implements ClientModInitializer {
 						BlockPos pos2 = AreaSelector.getPos2();
 
 						if (pos1 != null && pos2 != null) {
+							autoMinerTask.setMode(AutoMinerSettings.getMode());
+
 							autoMinerTask.start(pos1, pos2);
 							client.player.sendMessage(Text.literal("AutoMiner started."), false);
 						} else {
@@ -73,16 +82,25 @@ public class AutoMinerMod implements ClientModInitializer {
 			} else {
 				wasPressed = false; // Reset press detection
 			}
-			// Run AutoMiner logic every tick (even when idle)
 			autoMinerTask.tick();
 		});
 
-		// Register HUD overlay renderer for displaying status info
-		HudRenderCallback.EVENT.register((drawContext,
-										  tickDelta) -> {
-			AutoMinerHUDOverlay.render(drawContext, autoMinerTask);
+		ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
+			if (screen instanceof OptionsScreen) {
+				ButtonWidget button = ButtonWidget.builder(
+						Text.literal("AutoMinerMod Settings"),
+						btn -> client.setScreen(new AutoMinerSettingsScreen(screen))
+				).dimensions(screen.width / 2 - 100, screen.height / 6 + 144, 200, 20).build();
+
+				MixinScreenAccessor accessor = (MixinScreenAccessor) screen;
+				accessor.getDrawables().add(button);
+				accessor.getChildren().add(button);
+			}
 		});
+		// Register HUD overlay renderer for displaying status info
+		HudRenderCallback.EVENT.register(AutoMinerHUDOverlay::render);
 	}
+
 	/**
 	 * Returns whether the AutoMiner task is currently active.
 	 * @return true if the AutoMiner is running, false otherwise
