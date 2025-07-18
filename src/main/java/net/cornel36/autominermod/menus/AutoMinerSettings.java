@@ -18,4 +18,30 @@ public class AutoMinerSettings {
         currentMode = mode;
         System.out.println("AutoMiner mode set to " + mode);
     }
+
+    private static boolean straightMiningWalkForward = true;
+
+    public static boolean isStraightMiningWalkForward() {
+        return straightMiningWalkForward;
+    }
+
+    public static void setStraightMiningWalkForward(boolean value) {
+        straightMiningWalkForward = value;
+        System.out.println("Walk Forward set to " + value);
+    }
+
+    public enum MobGrinderType {
+        HOSTILE_ONLY,
+        ALL
+    }
+
+    private static MobGrinderType mobGrinderType = MobGrinderType.HOSTILE_ONLY;
+
+    public static MobGrinderType getMobGrinderModeType() {
+        return mobGrinderType;
+    }
+
+    public static void setMobGrinderModeType(MobGrinderType type) {
+        mobGrinderType = type;
+    }
 }

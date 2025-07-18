@@ -376,6 +376,7 @@ public class AreaMiningMode implements MiningMode {
         client.options.backKey.setPressed(false);
         client.options.leftKey.setPressed(false);
         client.options.rightKey.setPressed(false);
+        client.options.jumpKey.setPressed(false);
     }
 
     /**
@@ -577,5 +578,10 @@ public class AreaMiningMode implements MiningMode {
 
     public int getRemainingBlocks() {
         return totalBlockCount - blocksMinedSoFar;
+    }
+
+    @Override
+    public boolean isMoveForwardEnabled() {
+        return true;
     }
 }

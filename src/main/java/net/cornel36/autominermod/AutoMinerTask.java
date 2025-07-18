@@ -2,7 +2,10 @@ package net.cornel36.autominermod;
 
 import net.cornel36.autominermod.menus.AutoMinerSettings;
 import net.cornel36.autominermod.modes.MiningMode;
+import net.cornel36.autominermod.modes.MobGrinderMode;
+import net.cornel36.autominermod.modes.StraightMiningMode;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.*;
 import net.cornel36.autominermod.modes.AreaMiningMode;
 
@@ -14,7 +17,8 @@ public class AutoMinerTask {
     public enum State {
         IDLE,
         MINING,
-        DONE
+        DONE,
+        GRINDING
     }
 
     // Constants
@@ -31,31 +35,38 @@ public class AutoMinerTask {
 
     // Active mining mode
     private MiningMode mode;
-    private AutoMinerSettings.Mode currentMode = AutoMinerSettings.Mode.AREA;
-
-    public void setMode(AutoMinerSettings.Mode mode) {
-        this.currentMode = mode;
-    }
 
     public AutoMinerTask(MinecraftClient client) {
         this.client = client;
     }
 
-    public void start(BlockPos pos1, BlockPos pos2) {
+    public void start(AutoMinerSettings.Mode currentMode, BlockPos pos1, BlockPos pos2) {
         switch (currentMode) {
             case AREA:
-                mode = new AreaMiningMode(client, pos1, pos2, Math.min(pos1.getY(), pos2.getY()), Math.max(pos1.getY(), pos2.getY()));
+                if (pos1 == null || pos2 == null) {
+                    if (client.player != null) {
+                        client.player.sendMessage(Text.literal("Error: Area mining requires both positions to be set first."), false);
+                    }
+                    this.state = State.IDLE;
+                    return;
+                }
+                this.minY = Math.min(pos1.getY(), pos2.getY());
+                this.startY = Math.max(pos1.getY(), pos2.getY());
+                mode = new AreaMiningMode(client, pos1, pos2, this.minY, this.startY);
+                mode.start(pos1, pos2);
                 break;
             case STRAIGHT:
-                break; // TODO: Implement StraightMiningMode
+                mode = new StraightMiningMode(client);
+                mode.start(null, null);
+                break;
             case MOB_GRINDER:
-                break; // TODO: Implement MobGrinderMode
-            default:
-                mode = new AreaMiningMode(client, pos1, pos2, Math.min(pos1.getY(), pos2.getY()), Math.max(pos1.getY(), pos2.getY()));
+                mode = new MobGrinderMode(client);
+                mode.start(null, null);
                 break;
         }
-        mode.start(pos1, pos2);
-        state = State.MINING;
+        if (mode != null) {
+            state = State.MINING;
+        }
     }
 
         public BlockPos getCurrentTarget () {
@@ -71,16 +82,6 @@ public class AutoMinerTask {
             }
         }
 
-//        public void startAreaMining (BlockPos pos1, BlockPos pos2){
-//            this.areaPos1 = pos1;
-//            this.areaPos2 = pos2;
-//            this.minY = Math.min(pos1.getY(), pos2.getY());
-//            this.startY = Math.max(pos1.getY(), pos2.getY());
-//
-//            this.mode = new AreaMiningMode(client, pos1, pos2, minY, startY);
-//            this.state = State.MINING;
-//        }
-
         public void stop () {
             this.state = State.IDLE;
             this.mode = null;
@@ -88,14 +89,6 @@ public class AutoMinerTask {
 
         public boolean isRunning () {
             return state == State.MINING;
-        }
-
-        public boolean isDone () {
-            return state == State.DONE;
-        }
-
-        public void markDone () {
-            this.state = State.DONE;
         }
 
         public int getCurrentY () {

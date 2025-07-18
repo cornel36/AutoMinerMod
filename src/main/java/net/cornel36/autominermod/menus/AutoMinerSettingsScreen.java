@@ -1,6 +1,5 @@
 package net.cornel36.autominermod.menus;
 
-import net.cornel36.autominermod.menus.AutoMinerSettings;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -11,6 +10,11 @@ public class AutoMinerSettingsScreen extends Screen {
     private final Screen parent;
 
     private ButtonWidget modeButton;
+    private ButtonWidget mobGrinderTypeButton;
+
+    private String getMobGrinderTypeButtonText() {
+        return "Attack: " + (AutoMinerSettings.getMobGrinderModeType() == AutoMinerSettings.MobGrinderType.HOSTILE_ONLY ? "HOSTILE" : "ALL");
+    }
 
     public AutoMinerSettingsScreen(Screen parent) {
         super(Text.literal("AutoMiner Settings"));
@@ -25,7 +29,6 @@ public class AutoMinerSettingsScreen extends Screen {
         int y = this.height / 4;
 
         modeButton = ButtonWidget.builder(Text.literal(getModeButtonText()), button -> {
-            // change mode cyclically
             AutoMinerSettings.Mode newMode = switch (AutoMinerSettings.getMode()) {
                 case AREA -> AutoMinerSettings.Mode.STRAIGHT;
                 case STRAIGHT -> AutoMinerSettings.Mode.MOB_GRINDER;
@@ -33,15 +36,12 @@ public class AutoMinerSettingsScreen extends Screen {
             };
             AutoMinerSettings.setMode(newMode);
 
-            // update button text
             modeButton.setMessage(Text.literal(getModeButtonText()));
-            // refresh to show options for new mode
             this.refreshCustomizationOptions();
         }).dimensions(x, y, buttonWidth, buttonHeight).build();
 
         this.addDrawableChild(modeButton);
 
-        // Back button
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Back"), button -> {
             this.client.setScreen(parent);
         }).dimensions(x, this.height - 30, buttonWidth, buttonHeight).build());
@@ -56,6 +56,11 @@ public class AutoMinerSettingsScreen extends Screen {
             case MOB_GRINDER -> "Mob Grinder";
         };
     }
+
+    private String getWalkForwardButtonText() {
+        return "Walk Forward: " + (AutoMinerSettings.isStraightMiningWalkForward() ? "ON" : "OFF");
+    }
+
 
     private void refreshCustomizationOptions() {
         this.children().removeIf(child -> child != modeButton && !(child instanceof ButtonWidget && ((ButtonWidget) child).getMessage().getString().equals("Back")));
@@ -72,15 +77,26 @@ public class AutoMinerSettingsScreen extends Screen {
             }
             case STRAIGHT -> {
                 this.addDrawableChild(ButtonWidget.builder(
-                        Text.literal("Straight Mining options here"),
-                        b -> {}
+                        Text.literal(getWalkForwardButtonText()),
+                        button -> {
+                            AutoMinerSettings.setStraightMiningWalkForward(!AutoMinerSettings.isStraightMiningWalkForward());
+                            button.setMessage(Text.literal(getWalkForwardButtonText()));
+                        }
                 ).dimensions(x, y, 200, 20).build());
             }
             case MOB_GRINDER -> {
-                this.addDrawableChild(ButtonWidget.builder(
-                        Text.literal("Mob Grinder options here"),
-                        b -> {}
-                ).dimensions(x, y, 200, 20).build());
+                mobGrinderTypeButton = ButtonWidget.builder(
+                        Text.literal(getMobGrinderTypeButtonText()),
+                        button -> {
+                            AutoMinerSettings.MobGrinderType newType =
+                                    AutoMinerSettings.getMobGrinderModeType() == AutoMinerSettings.MobGrinderType.HOSTILE_ONLY
+                                            ? AutoMinerSettings.MobGrinderType.ALL
+                                            : AutoMinerSettings.MobGrinderType.HOSTILE_ONLY;
+                            AutoMinerSettings.setMobGrinderModeType(newType);
+                            button.setMessage(Text.literal(getMobGrinderTypeButtonText()));
+                        }
+                ).dimensions(x, y, 200, 20).build();
+                this.addDrawableChild(mobGrinderTypeButton);
             }
         }
     }
