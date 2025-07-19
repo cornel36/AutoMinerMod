@@ -4,6 +4,8 @@
 ![Mod Loader](https://img.shields.io/badge/loader-Fabric-green.svg)
 ![License](https://img.shields.io/badge/license-CC0--1.0-lightgrey.svg)
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/T6T51HNXD6)
+
 **AutoMinerMod** is a Fabric mod for Minecraft that automatically mines a selected 3D area, layer by layer from top to bottom. Once the area is defined, the mod handles navigation, block targeting, breaking, and tool switching autonomously.
 
 **This is an early release!** I'm actively working on fixing common issues and improving the mod.  
