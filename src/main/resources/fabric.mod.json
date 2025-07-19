@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
 	"id": "autominermod",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"name": "AutoMinerMod",
-	"description": "Automatically mines a selected 3D area layer by layer.",
+	"description": "Minecraft mod that automates tidious tasks ",
 	"authors": [
 		"cornel36"
 	],
