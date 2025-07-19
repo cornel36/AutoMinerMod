@@ -6,6 +6,8 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/T6T51HNXD6)
 
+### This mod can be considered cheating on many public multiplayer servers. It was designed primarily for single-player use or for private servers shared with friends where such automation is permitted. Using this mod on public servers is at your own risk and may lead to bans or other penalties.
+
 **AutoMinerMod** is a Fabric mod for Minecraft that automatically mines a selected 3D area, layer by layer from top to bottom. Once the area is defined, the mod handles navigation, block targeting, breaking, and tool switching autonomously.
 
 **This is an early release!** I'm actively working on fixing common issues and improving the mod.  
